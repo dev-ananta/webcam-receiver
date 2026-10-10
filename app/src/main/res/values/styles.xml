@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LocalCam" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#D84315</item>
+        <item name="colorPrimaryVariant">#BF360C</item>
+        <item name="colorSecondary">#FF7043</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#151515</item>
+        <item name="android:navigationBarColor">#151515</item>
+        <item name="android:windowBackground">#111111</item>
+    </style>
+</resources>
