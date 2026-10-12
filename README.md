@@ -1,26 +1,87 @@
-# LocalCam Android Companion
+# LocalCam Android Receiver
 
-Android receiver app for the LocalCam macOS menu-bar webcam streamer. It connects to the Mac over a local-network WebSocket and displays JPEG frames received as binary messages.
+Android companion app for [`dev-ananta/local-cam-menu-bar`](https://github.com/dev-ananta/local-cam-menu-bar). It connects to your Mac over local-network WebSocket and renders incoming JPEG webcam frames in real time.
 
-## Build with GitHub Actions
-1. Create a new GitHub repository and upload this project.
-2. Push to `main` or run **Actions → Build Android APK → Run workflow**.
-3. Download the `LocalCam-Android-APK` artifact from the completed workflow.
-4. Install `app-debug.apk` on your Android device. You may need to allow installs from your browser or file manager.
+## Prerequisites
 
-The workflow uses a GitHub-hosted Ubuntu runner and Gradle to build the debug APK. This is suitable for testing; a production release should use a signed release APK or Android App Bundle with a protected signing key.
+- Android Studio (Ladybug or newer recommended)
+- Android SDK Platform 35 + Build Tools 35.0.0
+- JDK 17
+- Android 8.0+ receiver device (API 26+)
+- Mac and Android device on the same trusted LAN/Wi-Fi
 
-## Connect
-1. Make sure the Android phone and Mac are on the same trusted Wi-Fi/LAN.
-2. Start streaming in the LocalCam macOS menu-bar app.
-3. Find the Mac's LAN IPv4 address in macOS System Settings → Network.
-4. Enter the address in this app, e.g. `192.168.1.42`, then tap **Connect**.
-5. The app connects to `ws://192.168.1.42:8765/` and displays incoming JPEG frames.
+## Streaming protocol compatibility
 
-If it cannot connect, check that both devices are on the same network, the Mac is streaming, and the Mac firewall allows incoming connections on TCP port 8765.
+This app is implemented to match the current `local-cam-menu-bar` baseline protocol:
 
-## Compatibility / limitations
-- Requires Android 8.0 (API 26) or newer.
-- This receiver expects each WebSocket binary message to contain one JPEG image, matching the LocalCam macOS starter project.
-- The connection uses unencrypted `ws://` and has no authentication. Use only on a trusted private LAN; do not port-forward the port. Add TLS and authenticated pairing before production use.
-- The Android project has been generated but not built on a real Android SDK runner in this conversation. GitHub Actions is intended to perform the build and expose any compile issues.
+- Transport: `ws://` (WebSocket over local network)
+- Default endpoint: `ws://<Mac-LAN-IP>:8765/`
+- Message format: each **binary** WebSocket message is one complete JPEG frame
+- Authentication/TLS: not provided by the current companion macOS starter app
+
+If the macOS server protocol changes in the future, update the receiver accordingly.
+
+## Build locally
+
+```bash
+./gradlew clean testDebugUnitTest assembleDebug
+```
+
+Debug APK output:
+
+```text
+app/build/outputs/apk/debug/app-debug.apk
+```
+
+## Run and connect
+
+1. Start streaming from the macOS menu bar app.
+2. Open **LocalCam Receiver** on Android.
+3. Enter the Mac LAN IP (or host) and port (default `8765`).
+4. Tap **Connect**.
+5. Use **Disconnect** to stop, or **Reconnect** for manual reconnect.
+
+The app remembers your last-used host and port.
+
+## Connection behavior
+
+- States: disconnected, connecting, connected, reconnecting, failed
+- Automatic retry: capped backoff retries after failures
+- Manual reconnect supported at any time
+- Bounded frame queue: stale frames are dropped to keep latency low
+- Malformed/oversized frames are rejected with user-visible errors
+
+## Troubleshooting
+
+- Ensure the Mac app is actively streaming.
+- Confirm both devices are on the same LAN and VPN is not isolating traffic.
+- Verify host/port are correct and Mac firewall allows inbound TCP `8765`.
+- If you see repeated reconnects, check Wi-Fi stability and whether the Mac app stopped streaming.
+- If preview is blank but connected, verify the sender is transmitting JPEG binary frames.
+
+## Security limitations
+
+- Traffic is unencrypted `ws://` by current protocol baseline.
+- No authentication is currently used by the companion starter server.
+- Use only on trusted private networks.
+- Do **not** expose or port-forward the stream endpoint to the public internet.
+
+## GitHub Actions CI
+
+Workflow: `.github/workflows/build.yml`
+
+On every push, pull request, and manual run, CI:
+
+1. Sets up JDK 17 + Android SDK
+2. Runs `testDebugUnitTest`
+3. Builds debug APK (`assembleDebug`)
+4. Uploads debug APK artifact: **LocalCam-Android-debug-apk**
+
+Optional signed release build is enabled when these repository secrets are set:
+
+- `ANDROID_SIGNING_KEYSTORE_BASE64`
+- `ANDROID_SIGNING_STORE_PASSWORD`
+- `ANDROID_SIGNING_KEY_ALIAS`
+- `ANDROID_SIGNING_KEY_PASSWORD`
+
+When present, CI builds `assembleRelease` and uploads **LocalCam-Android-release-apk**.

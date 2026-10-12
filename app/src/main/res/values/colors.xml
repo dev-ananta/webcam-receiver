@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lc_background">#101216</color>
+    <color name="lc_surface">#171B22</color>
+    <color name="lc_input_bg">#1A2029</color>
+    <color name="lc_text_primary">#F3F4F6</color>
+    <color name="lc_text_secondary">#A8B3C5</color>
+    <color name="lc_accent">#4F8BFF</color>
+    <color name="lc_error">#FF7A7A</color>
+</resources>
