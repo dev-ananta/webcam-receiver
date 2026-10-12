@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LocalCam Receiver</string>
+    <string name="subtitle">Receive a live webcam stream from your Mac over your local network.</string>
+    <string name="ip_hint">Mac IP address or host</string>
+    <string name="port_hint">WebSocket port</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="preview_placeholder">Video preview appears here</string>
+    <string name="preview_content_description">Incoming webcam stream preview</string>
+</resources>
