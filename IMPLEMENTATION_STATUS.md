@@ -44,4 +44,7 @@ Verified in `dev-ananta/local-cam-menu-bar`:
 - [x] Added unit tests for connection config parsing, retry policy, and frame validation.
 - [x] Updated GitHub Actions workflow for push/PR builds, tests, APK artifacts, and optional signed release.
 - [x] Updated README with setup, usage, troubleshooting, security limitations, and CI artifact instructions.
-- [ ] Final local verification (tests/build/validation scans) pending execution results in this run.
+- [x] Final local verification attempted:
+  - `./gradlew clean testDebugUnitTest assembleDebug` is currently blocked in this execution environment because `dl.google.com` DNS resolution fails while fetching Android Gradle Plugin dependencies.
+  - Secret scan completed on changed files with no findings.
+  - Parallel validation completed (CodeQL: no alerts; code-review tool unavailable in this environment).
